@@ -129,8 +129,15 @@ Unshelt16$month_recode <- if_else(Unshelt16$Current_Stint_Duration_Detailed < 31
                                                                                                           )))))))))),12)
 monthly_combined <- c(Unshelt13$month_recode,Unshelt16$month_recode,Unshelt17$month_recode)
 library(MASS)
-monthly_combined_to_11 <- (monthly_combined[monthly_combined < 12] - 0.999)/10.1
-fitdistr(monthly_combined_to_11, "beta", list(shape1=1,shape2=1)) #0.3022, 0.7683
+monthly_combined_to_11 <- (monthly_combined[monthly_combined < 12] - 0.9)/11
+eleven_in_0_1 <- sort(unique(monthly_combined_to_11))
+fitdistr(monthly_combined_to_11, "beta", list(shape1=1,shape2=1)) #0.60804222, 1.43282957
 fitdistr(monthly_combined_to_11, "exponential") #3.046
-exp_vec_11 <- dexp(seq(0,1,length.out = 11),3.046)
-exp_vec_11 <- (exp_vec_11/sum(exp_vec_11))*0.3
+beta_vec_11 <- dbeta(eleven_in_0_1,0.60804222,1.43282957)
+beta_vec_11 <- (beta_vec_11/sum(beta_vec_11))*0.3
+exit_rates <- rep(NA,11)
+for(i in 1:10){
+  exit_rates[i] = 1-(beta_vec_11[i+1]/beta_vec_11[i])
+}
+# Added beta function estimation and resultant exit rates to excel sheet
+
